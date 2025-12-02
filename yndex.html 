@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мій Музичний Сайт</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 30px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .player-section {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .main-player {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .current-track {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .track-info h2 {
+            font-size: 1.4em;
+            margin-bottom: 5px;
+        }
+        
+        .track-info p {
+            color: #ccc;
+            font-size: 1.1em;
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .playlist-section {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .playlist-section h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+        
+        .track-list {
+            list-style: none;
+        }
+        
+        .track-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .track-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .track-item.playing {
+            background: rgba(255, 255, 255, 0.25);
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .track-item .title {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin: 15px 0;
+            cursor: pointer;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #4CAF50;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+        
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #ccc;
+            font-size: 0.9em;
+        }
+        
+        /* Стилі для скролбару */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 Мій Музичний Сайт</h1>
+            <p>Музика з Internet Archive</p>
+        </header>
+        
+        <main>
+            <section class="player-section">
+                <div class="main-player">
+                    <div class="current-track">
+                        <div class="track-info">
+                            <h2 id="currentTitle">Оберіть композицію</h2>
+                            <p id="currentArtist">Зі списку нижче</p>
+                        </div>
+                    </div>
+                    
+                    <audio id="audioPlayer" class="audio-player"></audio>
+                    
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    
+                    <div class="time-info">
+                        <span id="currentTime">0:00</span>
+                        <span id="duration">0:00</span>
+                    </div>
+                    
+                    <div class="controls">
+                        <button onclick="previousTrack()">⏮ Назад</button>
+                        <button onclick="togglePlay()">▶ Відтворити</button>
+                        <button onclick="nextTrack()">Далі ⏭</button>
+                    </div>
+                </div>
+                
+                <div class="playlist-section">
+                    <h2>📋 Плейлист</h2>
+                    <ul class="track-list" id="playlist">
+                        <!-- Треки будуть додані через JavaScript -->
+                    </ul>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>Музика зберігається в <a href="https://archive.org/" style="color: #4CAF50;">Internet Archive</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Твої треки з Internet Archive - ЗАМІНИ ці посилання на свої!
+        const tracks = [
+            {
+                title: "Назва пісні 1",
+                artist: "Виконавець 1",
+                src: "ТВОЄ_ПОСИЛАННЯ_НА_MP3_1"
+            },
+            {
+                title: "Назва пісні 2", 
+                artist: "Виконавець 2",
+                src: "ТВОЄ_ПОСИЛАННЯ_НА_MP3_2"
+            },
+            {
+                title: "Назва пісні 3",
+                artist: "Виконавець 3", 
+                src: "ТВОЄ_ПОСИЛАННЯ_НА_MP3_3"
+            }
+        ];
+
+        const audioPlayer = document.getElementById('audioPlayer');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const currentTitle = document.getElementById('currentTitle');
+        const currentArtist = document.getElementById('currentArtist');
+        const playlistEl = document.getElementById('playlist');
+        
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+
+        // Завантажуємо плейлист
+        function loadPlaylist() {
+            tracks.forEach((track, index) => {
+                const li = document.createElement('li');
+                li.className = 'track-item';
+                li.innerHTML = `
+                    <div class="title">${track.title}</div>
+                    <div class="artist">${track.artist}</div>
+                `;
+                li.addEventListener('click', () => playTrack(index));
+                playlistEl.appendChild(li);
+            });
+        }
+
+        // Відтворення треку
+        function playTrack(index) {
+            currentTrackIndex = index;
+            const track = tracks[index];
+            
+            audioPlayer.src = track.src;
+            currentTitle.textContent = track.title;
+            currentArtist.textContent = track.artist;
+            
+            // Оновлюємо виділення в плейлисті
+            document.querySelectorAll('.track-item').forEach((item, i) => {
+                item.classList.toggle('playing', i === index);
+            });
+            
+            audioPlayer.play();
+            isPlaying = true;
+        }
+
+        // Перемикач відтворення/паузи
+        function togglePlay() {
+            if (audioPlayer.src === '') {
+                playTrack(0);
+                return;
+            }
+            
+            if (isPlaying) {
+                audioPlayer.pause();
+            } else {
+                audioPlayer.play();
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Наступний трек
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            playTrack(currentTrackIndex);
+        }
+
+        // Попередній трек  
+        function previousTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            playTrack(currentTrackIndex);
+        }
+
+        // Оновлення прогресу
+        function updateProgress(e) {
+            const { duration, currentTime } = e.srcElement;
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            
+            currentTimeEl.textContent = formatTime(currentTime);
+            if (duration) {
+                durationEl.textContent = formatTime(duration);
+            }
+        }
+
+        // Встановлення прогресу при кліку
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audioPlayer.duration;
+            
+            audioPlayer.currentTime = (clickX / width) * duration;
+        }
+
+        // Форматування часу
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // Події
+        audioPlayer.addEventListener('timeupdate', updateProgress);
+        audioPlayer.addEventListener('ended', nextTrack);
+        progressContainer.addEventListener('click', setProgress);
+
+        // Автозавантаження плейлиста
+        loadPlaylist();
+    </script>
+</body>
+</html>
